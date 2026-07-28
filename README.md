@@ -1,83 +1,39 @@
-# MDComputers Product Scraper
+# S&P 500 Companies by Founding Year
 
-A Python script to scrape product listings from [MDComputers](https://mdcomputers.in) search results.
-
-Example search URL: `https://mdcomputers.in/?route=product/search&search=external`
-
-## Features
-
-- Search products by keyword
-- Automatic pagination across result pages
-- Extracts name, URL, product ID, image, prices, and discount from listings
-- Optional product-page details: SKU, model, availability, description
-- Export results to JSON or CSV
+A shell script that fetches the S&P 500 constituents CSV and prints each company's name, headquarters location, and founding year, sorted by year (oldest first).
 
 ## Requirements
 
-- Python 3.10+
-
-## Installation
-
-```bash
-git clone https://github.com/KhushiramMeena/scrap-data-script.git
-cd scrap-data-script
-pip install -r requirements.txt
-```
+- `bash`
+- `curl`
+- `python3`
 
 ## Usage
 
 ```bash
-# Print results as JSON
-python mdcomputers_scraper.py external --pretty
+# Use the default S&P 500 CSV URL
+./sp500_by_founding_year.sh
 
-# Save all pages to JSON
-python mdcomputers_scraper.py external -o results.json
-
-# Scrape only the first 2 pages
-python mdcomputers_scraper.py external --max-pages 2 -o results.json
-
-# Include SKU, model, stock status, and description
-python mdcomputers_scraper.py external --details -o results.json
-
-# Export to CSV
-python mdcomputers_scraper.py external -o results.csv
+# Or pass a custom CSV URL
+./sp500_by_founding_year.sh "https://example.com/constituents.csv"
 ```
-
-### Options
-
-| Option | Description |
-|--------|-------------|
-| `search` | Search term (required) |
-| `--max-pages` | Limit number of pages to scrape |
-| `--details` | Fetch extra fields from each product page |
-| `--delay` | Seconds to wait between requests (default: `1.0`) |
-| `-o`, `--output` | Output file (`.json` or `.csv`) |
-| `--pretty` | Print formatted JSON to stdout |
 
 ## Example Output
 
-```json
-{
-  "name": "Seagate Expansion 1TB External Hard Drive",
-  "url": "https://mdcomputers.in/product/seagate-expansion-1tb-external-hard-drive-stkm1000400",
-  "product_id": "16447",
-  "image_url": "https://mdcomputers.in/image/catalog/...",
-  "original_price": "₹10,000",
-  "sale_price": "₹9,160",
-  "discount": "-8%",
-  "sku": "SEAGATE",
-  "model": "STKM1000400",
-  "availability": "InStock",
-  "description": "..."
-}
 ```
+Year    Company                                   Location
+----    -------                                   --------
+1784    BNY Mellon                                New York City, New York
+1792    State Street Corporation                  Boston, Massachusetts
+1806    Colgate-Palmolive                         New York City, New York
+...
+```
+
+## Data Source
+
+Default CSV: [S&P 500 Companies dataset](https://github.com/datasets/s-and-p-500-companies)
 
 ## Notes
 
-- MDComputers is protected by Cloudflare. The script uses `curl_cffi` with browser impersonation to make requests work reliably.
-- Use `--delay` to avoid sending requests too quickly.
-- Use `--details` only when you need SKU/model/stock data, since it makes one extra request per product.
-
-## License
-
-MIT
+- The script uses Python for CSV parsing because location fields contain commas inside quoted values.
+- Founding years like `2013 (1888)` are sorted by the first 4-digit year in the field.
